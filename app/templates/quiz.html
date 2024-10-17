@@ -1,0 +1,20 @@
+{% extends 'base.html' %} {% block content %}
+<div id="quiz-container">
+    <h1 id="quiz-header">Questionário</h1>
+
+    <form method="post" id="chat-widget-quiz">
+        {% for topic in topics %}
+        <div class="quiz-block">
+            <h3>{{topic.question}}</h3>
+            <input type="radio" id="sim" name="{{topic.title}}" value="YES">
+            <label for="sim">Sim</label>
+            <br>
+            <input type="radio" id="nao" name="{{topic.title}}" value="NO">
+            <label for="nao">Não</label>
+        </div>
+        {% endfor %}
+        <hr />
+        <button type="submit" class="btn" name="send">Enviar</button>
+    </form>
+</div>
+{% endblock %}

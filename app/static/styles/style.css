@@ -21,6 +21,42 @@
     max-width: 720px;
     margin: 0 auto;
   }
+  
+  .btn {
+    height: calc(1.1rem + 20px);
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    border: 2px solid green;
+    color: white;
+    background-color: green;
+    transition: all 0.1s ease-in;
+  }
+  
+  .btn:hover {
+    background-color: white;
+    color: green;
+  }
+
+  /* Home */
+
+  #home-container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+    padding: 0 30px;
+    padding-bottom: 30px;
+  }
+
+  #home-header {
+    text-align: center;
+    margin: 20px 0;
+    color: rgb(0, 73, 101);
+  }
+
+  /* Login */
 
   #login-container {
     height: 100%;
@@ -58,15 +94,6 @@
     margin-bottom: 20px;
   }
   
-  #chat-widget-login button {
-    height: calc(1.1rem + 20px);
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    cursor: pointer;
-  }
-  
   #name-input {
     display: flex;
     flex-direction: column;
@@ -74,18 +101,6 @@
   
   #code-label {
     display: block;
-  }
-  
-  #login {
-    border: 2px solid green;
-    color: white;
-    background-color: green;
-    transition: all 0.1s ease-in;
-  }
-  
-  #login:hover {
-    background-color: white;
-    color: green;
   }
   
   #create {
@@ -109,16 +124,40 @@
     border-radius: 10px;
     font-weight: 900;
   }
+
+  /* Quiz */
+
+  #quiz-container {
+    height: 100%;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+  }
+
+  #quiz-header {
+    text-align: center;
+    margin: 20px 0;
+    color: rgb(0, 73, 101);
+  }
   
-  .question-block {
+  #chat-widget-quiz {
+    padding: 30px;
+  }
+  
+  #chat-widget-quiz label {
+    font-size: 0.9rem;
+  }
+  
+  .quiz-block {
     width: calc(100% - 30px);
-    margin: 0 auto;
+    margin: 20px auto;
     padding: 10px;
     background-color: lightblue;
     color: black;
     border-radius: 10px;
     font-weight: 900;
   }
+
+  /*  */
   
   #room-container {
     height: 100%;
