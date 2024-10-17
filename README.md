@@ -5,3 +5,4 @@ Web chat for a school research project about people's ability to carry on friend
 ## Requirements
 
 - Flask-SocketIO
+- gunicorn

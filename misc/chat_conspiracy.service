@@ -1,0 +1,13 @@
+[Unit]
+Description=Gunicorn instance to serve application
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/chat_conspiracy/app
+Environment="PATH=/home/ubuntu/chat_conspiracy/venv/bin"
+ExecStart=/home/ubuntu/chat_conspiracy/venv/bin/gunicorn --worker-class eventlet -w1 --bind unix:chat_conspiracy.sock -m 007 wsgi:app
+
+[Install]
+WantedBy=multi-user.target
