@@ -20,7 +20,18 @@ users = [
         {'id': 3, 'value': None}
     ]}
 ]
+last_user_id = 2
 
+dashboard_data_for_user_sample = [
+    {'title': 'topic 1', 'users': ['ana', 'bob']},
+    {'title': 'topic 2', 'users': ['bob', 'caca']}
+]
+
+
+def add_user(nickname):
+    global last_user_id
+    last_user_id += 1
+    users.append({'id': last_user_id, 'nickname': nickname, 'has_quiz': False})
 
 def find_user(nickname):
     for user in users:
@@ -61,7 +72,11 @@ def login():
             return render_template('login.html', error="Campo Apelido é obrigatório")
         user = find_user(nickname)
         if user == None:
-            return render_template('login.html', error="Usuário não cadastrado")
+            # return render_template('login.html', error="Usuário não cadastrado")
+            add_user(nickname)
+            user = find_user(nickname)
+            if user == None:
+                return render_template('login.html', error="Usuário não cadastrado")
         
         session['nickname'] = nickname
 
@@ -96,11 +111,14 @@ def quiz():
 
 @app.route('/dashboard', methods=["GET", "POST"])
 def dashboard():
+    global dashboard_data_for_user_sample
+
     nickname = session['nickname']
     user = find_user(nickname).copy() # so we don't update inplace to emulate a real db
     print_user(user)
+    print(dashboard_data_for_user_sample)
 
-    return render_template('dashboard.html')
+    return render_template('dashboard.html', nickname=nickname, dashboard_data=dashboard_data_for_user_sample)
 
 
 if __name__ == '__main__':
