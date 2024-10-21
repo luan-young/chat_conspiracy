@@ -189,6 +189,12 @@
     padding: 0 30px;
     padding-bottom: 30px;
   }
+
+  #room-header {
+    text-align: center;
+    margin: 20px 0;
+    color: rgb(0, 73, 101);
+  }
   
   #room-subsection {
     margin-bottom: 20px;

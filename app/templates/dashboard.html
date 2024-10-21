@@ -4,48 +4,49 @@
 
     <div id="topicList"></div>
 
-    <script>
-        const dashboard_data2 = [
-            {
-                title: "Teoria Terra Plana",
-                users: ["Ana", "Bob", "Caca"]
-            },
-            {
-                title: "Teoria Lua",
-                users: ["Ana", "Caca"]
-            },
-            {
-                title: "Teoria Iluminatis",
-                users: ["Bob", "Dani", "Eva", "Fabi"]
-            }
-        ];
-        function renderTopics() {
+    <script type="text/javascript">
+        // var socketio = io();
+
+        function renderTopic(topic) {
+            
             const topicList = document.getElementById('topicList');
 
-            dashboard_data2.forEach(topic => {
-                const topicDiv = document.createElement('div');
-                topicDiv.classList.add('dashboard-topic');
+            const topicDiv = document.createElement('div');
+            topicDiv.classList.add('dashboard-topic');
 
-                const title = document.createElement('h2');
-                title.classList.add('dashboard-topic-title');
-                title.textContent = topic.title;
-                topicDiv.appendChild(title);
+            const title = document.createElement('h2');
+            title.classList.add('dashboard-topic-title');
+            title.textContent = topic.title;
+            topicDiv.appendChild(title);
 
-                topic.users.forEach(user => {
-                    const userDiv = document.createElement('div');
-                    userDiv.classList.add('dashboard-user');
-                    userDiv.textContent = user;
-                    topicDiv.appendChild(userDiv);
-                });
+            topic.users.forEach(user => {
+                const userLink = document.createElement('a');
+                userLink.href = '/room';
 
-                // Adiciona o tópico ao container principal
-                topicList.appendChild(topicDiv);
+                const userDiv = document.createElement('div');
+                userDiv.classList.add('dashboard-user');
+                userDiv.textContent = user;
+
+                userLink.appendChild(userDiv);
+                topicDiv.appendChild(userLink);
             });
+
+            topicList.appendChild(topicDiv);
         }
 
-        // Renderiza os tópicos na página
-        renderTopics();
+        // socketio.on("message", function(topic) {
+        //     console.log(topic);
+        //     renderTopic(topic);
+        // });
+
     </script>
+
+    {% for topic in dashboard_data %}
+    <script type="text/javascript">
+        var topicData = JSON.parse('{{ topic | tojson }}');
+        renderTopic(topicData);
+    </script>
+    {% endfor %}
 
 </div>
 {% endblock %}
