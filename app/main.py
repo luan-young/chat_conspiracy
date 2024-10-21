@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, join_room, leave_room, send
 
 from users import *
 from topics import *
+from rooms import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SENHAULTRASECRETMAXFROQROIEJQO'
@@ -105,75 +106,97 @@ def dashboard():
     if not user:
         return redirect(url_for('login'))
     user = user.copy() # so we don't update inplace to emulate a real db
-    print_user(user)
     
     opposing_users = user['opposers']
 
     return render_template('dashboard.html', nickname=nickname, dashboard_data=opposing_users)
 
 
-@app.route('/room')
-def room():
-    room = 'teste_room'
+@app.route('/room/<topic_id>/<other_nickname>')
+def room(topic_id, other_nickname):
+    
     nickname = session['nickname']
+    user = find_user(nickname)
+    if not user:
+        return redirect(url_for('login'))
+    topic = find_topic(topic_id)
+    if not topic:
+        return redirect(url_for('dashboard'))
+    topic_title = topic['title']
+    print('FINDING OPPSERRS DATA')
+    opposer_data = find_user_opposer_data(user, topic_id, other_nickname)
+    print(opposer_data)
+    if not opposer_data:
+        return redirect(url_for('dashboard'))
+    room_id = opposer_data['room_id']
+    if not room_id:
+        room = add_room(nickname, other_nickname)
+        room_id = room['id']
+        update_users_room(nickname, other_nickname, topic_id, room_id)
+    else:
+        room = find_room(room_id)
+        if not room:
+            return redirect(url_for('dashboard'))
+    
+    messages = room['messages']
+    session['room'] = room_id
 
-    session['room'] = room
-
-    return render_template('room.html', room=room, user=nickname)
+    return render_template('room.html', user=nickname, other_user=other_nickname, topic_title=topic_title, messages=messages)
 
 
 
 @socketio.on('connect')
 def handle_connect():
     nickname = session.get('nickname', None)
-    room = session.get('room', None)
+    room_id = session.get('room', None)
 
-    if nickname is None or room is None:
+    if nickname is None or room_id is None:
         return
 
     print(f'User {nickname} has connected')
     # connect_user(nickname)
-    join_room(room)
+    join_room(room_id)
     send({
         "sender": "",
         "message": f"{nickname} has entered the chat"
-    }, to=room)
+    }, to=room_id)
 
 
 @socketio.on('disconnect')
 def handle_connect():
     nickname = session.get('nickname', None)
-    room = session.get('room', None)
+    room_id = session.get('room', None)
 
-    if nickname is None or room is None:
+    if nickname is None or room_id is None:
         return
 
     print(f'User {nickname} has DISCONECTED')
     # disconnect_user(nickname)
-    leave_room(room)
+    leave_room(room_id)
     send({
         "message": f"{nickname} has left the chat",
         "sender": ""
-    }, to=room)
+    }, to=room_id)
 
 
 @socketio.on('message')
 def handle_message(payload):
     nickname = session.get('nickname', None)
-    room = session.get('room', None)
+    room_id = session.get('room', None)
 
-    if nickname is None or room is None:
+    if nickname is None or room_id is None:
         return
 
-    # if room not in rooms:
-    #     return
+    room = find_room(room_id)
+    if not room:
+        return
 
     message = {
         "sender": nickname,
         "message": payload["message"]
     }
-    send(message, to=room)
-    # rooms[room]["messages"].append(message)
+    send(message, to=room_id)
+    room['messages'].append(message)
 
 
 if __name__ == '__main__':

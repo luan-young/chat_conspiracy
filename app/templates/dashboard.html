@@ -19,13 +19,13 @@
             title.textContent = topic.title;
             topicDiv.appendChild(title);
 
-            topic.users.forEach(user => {
+            topic.opposers_data.forEach(opposer_data => {
                 const userLink = document.createElement('a');
-                userLink.href = '/room';
+                userLink.href = '/room/' + topic.topic_id + '/' + opposer_data.nickname;
 
                 const userDiv = document.createElement('div');
                 userDiv.classList.add('dashboard-user');
-                userDiv.textContent = user;
+                userDiv.textContent = opposer_data.nickname;
 
                 userLink.appendChild(userDiv);
                 topicDiv.appendChild(userLink);
