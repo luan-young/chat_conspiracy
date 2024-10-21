@@ -1,26 +1,14 @@
 from flask import Flask, request, render_template, redirect, url_for, session
 from flask_socketio import SocketIO, join_room, leave_room, send
 
+from users import *
+from topics import *
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'SENHAULTRASECRETMAXFROQROIEJQO'
 socketio = SocketIO(app)
 
 
-topics = [
-    {'id': 1, 'title': 'Terra Plana', 'question': 'Você acredita que a terra é plana?'},
-    {'id': 2, 'title': 'Lua Artificial', 'question': 'Você acredita que a lua não é um satélite natural e na verdade é outra coisa?'},
-    {'id': 3, 'title': 'Iluminatis', 'question': 'Você acredita nos Iluminatis?'}
-]
-
-users = [
-    {'id': 1, 'nickname': 'a', 'has_quiz': False},
-    {'id': 2, 'nickname': 'b', 'has_quiz': True, 'answers': [
-        {'id': 1, 'value': 'YES'},
-        {'id': 2, 'value': 'NO'},
-        {'id': 3, 'value': None}
-    ]}
-]
-last_user_id = 2
 
 users_connected = []
 
@@ -28,29 +16,6 @@ dashboard_data_for_user_sample = [
     {'title': 'topic 1', 'users': ['ana', 'bob']},
     {'title': 'topic 2', 'users': ['bob', 'caca']}
 ]
-
-def find_topic(id):
-    for topic in topics:
-        if topic['id'] == id:
-            return topic
-    return None
-
-def add_user(nickname):
-    global last_user_id
-    last_user_id += 1
-    users.append({'id': last_user_id, 'nickname': nickname, 'has_quiz': False})
-
-def find_user(nickname):
-    for user in users:
-        if user['nickname'] == nickname:
-            return user
-    return None
-
-def update_user_quiz(nickname, answers):
-    for user in users:
-        if user['nickname'] == nickname:
-            user['has_quiz'] = True
-            user['answers'] = answers
 
 def get_opposing_users_for_topic(target_user, topic_ans):
     opposing_users = []
@@ -91,12 +56,6 @@ def test():
     user = find_user('luan')
     opposing_users = get_opposing_users_by_topic(user)
     print(opposing_users)
-
-def print_user(user):
-    print(f"User: {user['nickname']}")
-    print(f"Has quiz: {user['has_quiz']}")
-    for ans in user['answers']:
-        print(f"Answer to {ans['id']}: {ans['value']}")
 
 def connect_user(nickname):
     global users_connected
