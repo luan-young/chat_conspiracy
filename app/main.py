@@ -9,54 +9,6 @@ app.config['SECRET_KEY'] = 'SENHAULTRASECRETMAXFROQROIEJQO'
 socketio = SocketIO(app)
 
 
-
-users_connected = []
-
-dashboard_data_for_user_sample = [
-    {'title': 'topic 1', 'users': ['ana', 'bob']},
-    {'title': 'topic 2', 'users': ['bob', 'caca']}
-]
-
-def get_opposing_users_for_topic(target_user, topic_ans):
-    opposing_users = []
-    if topic_ans['value'] == None:
-        return opposing_users
-    for user in users:
-        if user['id'] == target_user['id']:
-            continue
-        if 'answers' not in user:
-            continue
-        for ans in user['answers']:
-            if ans['id'] == topic_ans['id']:
-                if ans['value'] != None and ans['value'] != topic_ans['value']:
-                    opposing_users.append(user['nickname'])
-                break
-    return opposing_users
-
-def get_opposing_users_by_topic(user):
-    opposing_users_by_topic = []
-    if ('answers' not in user) or (user['answers'] == None):
-        return opposing_users_by_topic
-    for topic_ans in user['answers']:
-        topic = find_topic(topic_ans['id'])
-        if topic == None:
-            continue
-        opposing_users = get_opposing_users_for_topic(user, topic_ans)
-        opposing_users_by_topic.append({'id': topic['id'], 'title': topic['title'], 'users': opposing_users})
-    return opposing_users_by_topic
-
-def test():
-    add_user('luan')
-    user_answers = []
-    user_answers.append({'id': 1, 'value': 'YES'})
-    user_answers.append({'id': 2, 'value': 'YES'})
-    user_answers.append({'id': 3, 'value': 'YES'})
-    update_user_quiz('luan', user_answers)
-
-    user = find_user('luan')
-    opposing_users = get_opposing_users_by_topic(user)
-    print(opposing_users)
-
 def connect_user(nickname):
     global users_connected
     for user in users_connected:
@@ -123,7 +75,10 @@ def quiz():
     nickname = session.get('nickname', None)
     if not nickname:
         return redirect(url_for('login'))
-    user = find_user(nickname).copy() # so we don't update inplace to emulate a real db
+    user = find_user(nickname)
+    if not user:
+        return redirect(url_for('login'))
+    user = user.copy() # so we don't update inplace to emulate a real db
 
     if user['has_quiz']:
         return redirect(url_for('dashboard'))
@@ -133,7 +88,8 @@ def quiz():
         for topic in topics:
             title = topic['title']
             answer = request.form.get(title, None)
-            user_answers.append({'id': topic['id'], 'value': answer})
+            # user_answers.append({'id': topic['id'], 'value': answer})
+            user_answers.append(create_answer(topic['id'], title, answer))
         update_user_quiz(nickname, user_answers)
         return redirect(url_for('dashboard'))
     
@@ -145,10 +101,13 @@ def dashboard():
     global dashboard_data_for_user_sample
 
     nickname = session['nickname']
-    user = find_user(nickname).copy() # so we don't update inplace to emulate a real db
+    user = find_user(nickname)
+    if not user:
+        return redirect(url_for('login'))
+    user = user.copy() # so we don't update inplace to emulate a real db
     print_user(user)
     
-    opposing_users = get_opposing_users_by_topic(user)
+    opposing_users = user['opposers']
 
     return render_template('dashboard.html', nickname=nickname, dashboard_data=opposing_users)
 
