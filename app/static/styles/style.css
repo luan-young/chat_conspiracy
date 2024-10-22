@@ -17,7 +17,9 @@
   #root {
     background-color: white;
     width: 100%;
-    height: 100vh;
+    /* height: 100vh; */
+    min-height: 100vh;
+    height: 100%;
     max-width: 720px;
     margin: 0 auto;
   }
@@ -44,16 +46,29 @@
 
   #home-container {
     height: 100%;
-    display: grid;
-    grid-template-rows: auto auto 1fr;
+    /* display: grid;
+    grid-template-rows: auto auto 1fr; */
     padding: 0 30px;
     padding-bottom: 30px;
   }
 
   #home-header {
     text-align: center;
-    margin: 20px 0;
+    margin: 20px;
     color: rgb(0, 73, 101);
+    padding-top: 30px;
+  }
+
+  .home-div {
+    padding: 10px 0
+  }
+
+  #home-container p {
+    padding: 5px 0
+  }
+
+  #home-container ul {
+    padding: 0 15px
   }
 
   /* Login */
@@ -183,7 +198,7 @@
   /* Room */
   
   #room-container {
-    height: 100%;
+    height: 90vh;
     display: grid;
     grid-template-rows: repeat(2, auto) 1fr;
     padding: 0 30px;
